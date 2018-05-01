@@ -1,7 +1,7 @@
 """Utility file to seed ratings database from MovieLens data in seed_data/"""
 
-from sqlalchemy import func
 from datetime import datetime
+from sqlalchemy import func
 from model import User
 from model import Rating
 from model import Movie
@@ -43,10 +43,7 @@ def load_movies():
 
     for row in open("seed_data/u.item"):
         row = row.rstrip()
-        (movie_id, title, release_str, video_release_date, imdb_url, unknown, 
-            action, adventure, animation, childrens, comedy, crime, documentary, 
-            drama, fantasy, film_noir, horror, musical, mystery, romance, sci_fi, 
-            thriller, war, western) = row.split("|")
+        movie_id, title, release_str, junk, imdb_url = row.split("|")[:5]
 
         if release_str:
             released_at = datetime.strptime(release_str, "%d-%b-%Y")
@@ -74,6 +71,10 @@ def load_ratings():
         row = row.rstrip()
         user_id, movie_id, score, timestamp = row.split("\t")
 
+        user_id = int(user_id)
+        movie_id = int(movie_id)
+        score = int(score)
+        
         rating = Rating(user_id=user_id, movie_id=movie_id, 
                         score=score)
 
