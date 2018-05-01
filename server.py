@@ -33,6 +33,15 @@ def user_list():
 
     return render_template("users_list.html", users=users)
 
+
+@app.route('/create-account')
+def create_user():
+    """ Collect email and password. """
+
+    return render_template("registration.html")
+
+
+
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
     # point that we invoke the DebugToolbarExtension
