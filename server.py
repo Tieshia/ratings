@@ -51,7 +51,7 @@ def register_process():
 
 
     # check to see if exists in database
-    check_email = User.query.filter_by(email=user_email).all()
+    check_email = User.query.filter_by(email=user_email).first()
     
     # Check if user exists by email account.
     # if user exists...# pass
@@ -68,14 +68,39 @@ def register_process():
     return redirect('/')
 
 
-@app.route('/login')
+@app.route('/login', methods=["GET"])
 def login():
-    """Verifies user credentials."""
+    """ Get user email and password."""
+
+    return render_template('login.html')
+
+
+@app.route('/login', methods=["POST"])
+def login_process():    
+    """ Verifies user credentials."""
+
+    user_email = request.form.get('email')
+    user_password = request.form.get('password')
 
     # Query for email address in db
+    check_user = User.query.filter_by(email=user_email).first()
+
+    if check_user:
     # Email matches corresponding password
-    # Add user_id to flask session
-        # redirect to '/' and flash 'logged in'
+        if check_user.password == user_password:
+            # Add user_id to flask session
+            session['user'] = check_user.user_id
+            # redirect to '/' and flash 'logged in'
+            flash('Logged in!')
+            return redirect('/')
+        else:
+            flash('Invalid credentials.')
+            return redirect('/login')
+    else:
+        flash('User not in system.')
+        return redirect('/register')
+
+    
 
 
 
