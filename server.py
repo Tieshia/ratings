@@ -52,21 +52,30 @@ def register_process():
 
     # check to see if exists in database
     check_email = User.query.filter_by(email=user_email).all()
-    print check_email
+    
     # Check if user exists by email account.
     # if user exists...# pass
     if check_email:
-        pass
+        flash('User email already exists!')
+        return redirect('/register')
     # if it doesn't exist
         # add user to database
     else:
-        print "We're in the else statement!"
         new_user = User(email=user_email, password=user_password)
-        print "New user" , new_user
         db.session.add(new_user)
         db.session.commit()  
          
     return redirect('/')
+
+
+@app.route('/login')
+def login():
+    """Verifies user credentials."""
+
+    # Query for email address in db
+    # Email matches corresponding password
+    # Add user_id to flask session
+        # redirect to '/' and flash 'logged in'
 
 
 
