@@ -71,8 +71,11 @@ def register_process():
 @app.route('/login', methods=["GET"])
 def login():
     """ Get user email and password."""
-
-    return render_template('login.html')
+    if session.get('user'):
+        flash('Already logged in.')
+        return redirect('/')
+    else:
+        return render_template('login.html')
 
 
 @app.route('/login', methods=["POST"])
@@ -100,7 +103,18 @@ def login_process():
         flash('User not in system.')
         return redirect('/register')
 
-    
+
+@app.route('/logout')
+def logout():
+    """ Removes user from session. """
+    if session.get('user'):
+        del session['user']
+        flash('Logged out')
+
+    else:
+        flash('Not logged in.')    
+
+    return redirect('/')    
 
 
 
