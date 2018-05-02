@@ -34,11 +34,39 @@ def user_list():
     return render_template("users_list.html", users=users)
 
 
-@app.route('/create-account')
-def create_user():
+@app.route('/register', methods=["GET"])
+def register_form():
     """ Collect email and password. """
 
     return render_template("registration.html")
+
+
+@app.route('/register', methods=["POST"])
+def register_process():
+    """ Checks user input for new account. """
+
+    # take user email
+    user_email = request.form.get('email')
+    user_password = request.form.get('password')
+
+
+    # check to see if exists in database
+    check_email = User.query.filter_by(email=user_email).all()
+    print check_email
+    # Check if user exists by email account.
+    # if user exists...# pass
+    if check_email:
+        pass
+    # if it doesn't exist
+        # add user to database
+    else:
+        print "We're in the else statement!"
+        new_user = User(email=user_email, password=user_password)
+        print "New user" , new_user
+        db.session.add(new_user)
+        db.session.commit()  
+         
+    return redirect('/')
 
 
 

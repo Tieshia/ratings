@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
-	<form action="/process-registration">
+	<form action="/register" method="POST">
 		Enter your email address:
 		<input type="text" name="email"> <br>
 		Create a password:
-		<input type="text" name="password">
+		<input type="password" name="password"><input type="submit">
 	</form>
 {% endblock %}	
+
+<!-- Once complete, obtains following data: {'email': user_email, 'password': user_password} and passes to '/register-->
