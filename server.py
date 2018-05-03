@@ -31,7 +31,7 @@ def user_list():
 
     users = User.query.all()
 
-    return render_template("users_list.html", users=users)
+    return render_template("user_list.html", users=users)
 
 
 @app.route('/register', methods=["GET"])
@@ -95,7 +95,7 @@ def login_process():
             session['user'] = check_user.user_id
             # redirect to '/' and flash 'logged in'
             flash('Logged in!')
-            return redirect('/')
+            return redirect("/users/<check_user.user_id>")
         else:
             flash('Invalid credentials.')
             return redirect('/login')
@@ -116,6 +116,25 @@ def logout():
 
     return redirect('/')    
 
+
+@app.route('/users/<int:user_id>')
+def show_user_info(user_id):
+    """ """
+    user = User.query.filter_by(user_id=user_id).first()
+    age = user.age
+    zipcode = user.zipcode
+
+    ratings = user.ratings
+    user_results = []
+    
+    # iterate through each ratings record
+    for rating in ratings:
+        title = rating.movie.title
+        score = rating.score
+        # create tuple containing Movie title and score
+        user_results.append((title, score))
+        # append to user_results
+    return render_template('user-info.html', age=age, zipcode=zipcode, results=user_results)
 
 
 if __name__ == "__main__":
