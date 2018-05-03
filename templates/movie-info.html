@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Movie Details</h1>
+<ul>
+	{% for rating in movie.ratings %}
+	<li>
+		{{ rating.score }}
+	</li>
+	{% endfor %}
+
+</ul>	
+
+<!-- ADD FORM FOR SUBMITTING NEW RATING HERE -->
+
+
+{% endblock %}

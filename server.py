@@ -160,6 +160,22 @@ def show_movie_info(movie_id):
     return render_template('movie-info.html', movie=movie)
 
 
+@app.route("/movies/<int:movie_id>", methods=["POST"])
+def update_rating(movie_id):
+    """Update ratings."""
+
+    rating = request.form.get('rating')
+
+    check_rating = Rating.query.filter_by(user_id=session['user']).first()
+    if check_rating:
+        check_rating.score = rating
+    else:
+        new_rating = Rating(movie_id=movie_id, user_id=session['user'], score=rating)
+        db.session.add(new_rating)
+        db.session.commit()
+
+    flash('Thanks for rating! Please rate more!')
+    return redirect('/movies')
 
 
 
