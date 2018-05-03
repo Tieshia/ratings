@@ -5,6 +5,8 @@ from jinja2 import StrictUndefined
 from flask import (Flask, render_template, redirect, request, flash, session)
 from flask_debugtoolbar import DebugToolbarExtension
 
+from sqlalchemy import asc
+
 from model import User, Rating, Movie, connect_to_db, db
 
 
@@ -32,6 +34,15 @@ def user_list():
     users = User.query.all()
 
     return render_template("user_list.html", users=users)
+
+
+@app.route('/movies')
+def movie_list():
+    """ Show movies list. """
+
+    movies = Movie.query.order_by(asc(Movie.title)).all()
+
+    return render_template("movie_list.html", movies=movies)
 
 
 @app.route('/register', methods=["GET"])
@@ -95,7 +106,7 @@ def login_process():
             session['user'] = check_user.user_id
             # redirect to '/' and flash 'logged in'
             flash('Logged in!')
-            return redirect("/users/<check_user.user_id>")
+            return redirect("/users/{}".format(check_user.user_id))
         else:
             flash('Invalid credentials.')
             return redirect('/login')
@@ -119,11 +130,13 @@ def logout():
 
 @app.route('/users/<int:user_id>')
 def show_user_info(user_id):
-    """ """
-    user = User.query.filter_by(user_id=user_id).first()
+    """ Search and provide user details """
+
+    # Can simplify by passing entire user object to Jina and unpacking from there.
+    user = User.query.options(db.joinedload("ratings")).filter_by(user_id=user_id).first()
     age = user.age
     zipcode = user.zipcode
-
+    # See SQLAlchemy II lecture for using joined loads for ratings.
     ratings = user.ratings
     user_results = []
     
@@ -135,6 +148,19 @@ def show_user_info(user_id):
         user_results.append((title, score))
         # append to user_results
     return render_template('user-info.html', age=age, zipcode=zipcode, results=user_results)
+
+
+
+@app.route("/movies/<int:movie_id>", methods=["GET"])
+def show_movie_info(movie_id):
+    """Provide movie details and allow user to rate."""
+
+    movie = Movie.query.get(movie_id)
+
+    return render_template('movie-info.html', movie=movie)
+
+
+
 
 
 if __name__ == "__main__":
